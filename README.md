@@ -12,9 +12,9 @@ Due:due 11:59 pm on Tuesday 9 October 2018
 Marks:This assignment is worth 30% of your overall mark
 
 ### Requirements
-Using a big public AWS dataset write a MapReduce program undertake an inter-esting new analysis of the data. 
-Compare the performance of your program using differentsize clusters.This assignment can be either as a individual or
- in groups of two students.  If you forma team, make sure to include the name of your partner in the submission’s 
+Using a big public AWS dataset write a MapReduce program undertake an interesting new analysis of the data. 
+Compare the performance of your program using different size clusters.This assignment can be either as a individual or
+ in groups of two students.  If you form a team, make sure to include the name of your partner in the submission’s 
  description onCanvas, filenames that are named after your student numbers, the report and the presentation.
 
 ### Deliverables
@@ -24,34 +24,34 @@ Compare the performance of your program using differentsize clusters.This assign
 
 ### Code, output and logs (15 marks)
 - You must use AWS EMR (such as provided by RMIT through this course) for running your MapReduce program 
-(which may be developed on any machine) and access ingone (or more) of the public data sets in S3, 
+(which may be developed on any machine) and access in gone (or more) of the public data sets in S3, 
 such as:
 1.s3://datasets.elasticmapreduce/ngrams/books/ 
 2.s3://aws-publicdatasets/common-crawl/ 
 You do NOT have to use these two datasets. 
-The full list of datasets can be foundhere:https://registry.opendata.aws/
+The full list of datasets can be found here:https://registry.opendata.aws/
 - In choosing a dataset(s) and analysis to undertake, a combination of the two factors may contribute to novelty. 
-In particular, for a similar difficulty of analysis task, morenovelty will be given for using thecommon-crawlinstead of 
-ngrams, and even morenovelty will be given for another similar size dataset available ons3.•Paths should not be 
+In particular, for a similar difficulty of analysis task, more novelty will be given for using the common-crawl instead of 
+ngrams, and even more novelty will be given for another similar size dataset available ons3.•Paths should not be 
 hard-coded.•As you are required to time your tasks, you should carefully log your experiments on different sized clusters.
 
 - Your MapReduce program(s) must be well written, using good coding style and in-cluding appropriate use of comments. 
  Your markers will look at your source code. Coding style will form a small part of the assessment of this assignment. 
 - You should provide instructions with your code on how to compile and execute it.If your marker cannot compile your
-programs, you risk yielding zero marks for thecoding component of your assignment.•Depending  on  the  size  of  
-output  your  MapReduce  program  generates,  you  maychoose or need to submit only samples of the output 
-(in which case you should alsoprovide a complete summary of all the output).
-- Depending on your implementation, you may wish to provide additional informationabout your code 
+programs, you risk yielding zero marks for the coding component of your assignment.•Depending  on  the  size  of  
+output  your  MapReduce  program  generates,  you  may choose or need to submit only samples of the output 
+(in which case you should also provide a complete summary of all the output).
+- Depending on your implementation, you may wish to provide additional information about your code 
 (for example, how it is to be compiled and run), output and logs. If so, put this information into a plain text file called 
 readme.txt.•You can use either Java, Python, Hive or Pig to develop your MapReduce programover AWS EMR.
 
 ### Results of experiments and written report (10 marks)
-- You are required to write a short report in the style of a conference paper on yourexperiments.
-- The text of the report should be only TWO A4 pages (not including references andappendices), using the IEEE conference 
+- You are required to write a short report in the style of a conference paper on your experiments.
+- The text of the report should be only TWO A4 pages (not including references and appendices), using the IEEE conference 
 template for Word or LaTex http://www.ieee.org/conferences_events/conferences/publishing/templates.htmlhowever you may 
-provide additional material including references, and appendicescontaining output, tables, graphs in additional pages. 
-Your report must be a PDF file, calledsNNNNNNN(sNNNNNNN).report.pdf, wheresNNNNNNN is your student number and the optional 
-partner’s student number.  Filesthat do not meet this requirement may not be marked. Your report must be well-written.
+provide additional material including references, and appendices containing output, tables, graphs in additional pages. 
+Your report must be a PDF file, called sNNNNNNN(sNNNNNNN).report.pdf, wheresNNNNNNN is your student number and the optional 
+partner’s student number.  Files that do not meet this requirement may not be marked. Your report must be well-written.
 - Your report should include:
     1. Explain how you implemented your map reduce program.
     2. Undertake experiments using your programs and report on the output and timings.
@@ -74,7 +74,7 @@ Q1. If I do not have any idea to choose which algorithm to work on my assignment
 A1: You can choose one of below four topics to implement your assignment. You can also find exemplar standard based on the code rubrics how we mark your code.
  
 1. Algorithm from Week 5 lecture: Implement the co-occurrence problem over common crawl dataset: 
-https://registry.opendata.aws/commoncrawl/ (Links to an external site.) Links to an external site., 
+https://registry.opendata.aws/commoncrawl/ , 
 compare the performance of different optimisations such as pairs, stripes by changing number of clusters, 
 dataset size, etc. If you implement this, you can get a fair score. If you further implement local aggregation, 
 partitioner, combiner, you will get a good score.  If you further use multiple datasets from AWS except the common 

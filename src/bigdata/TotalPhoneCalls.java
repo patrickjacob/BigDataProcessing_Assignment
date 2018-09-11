@@ -1,4 +1,4 @@
-package au.rmit.bde;
+package bigdata;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;

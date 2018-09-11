@@ -1,4 +1,4 @@
-package au.rmit.bde;
+package bigdata;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;

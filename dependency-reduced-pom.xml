@@ -4,14 +4,23 @@
   <groupId>cooccurence</groupId>
   <artifactId>BigD_assignmen1</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <scm>
+    <connection>scm:git:git@github.com:patrickjacob/BigDataProcessing_Assignment.git</connection>
+    <url>git@github.com:patrickjacob/BigDataProcessing_Assignment.git</url>
+  </scm>
   <build>
-    <sourceDirectory>src/</sourceDirectory>
     <resources>
+      <resource>
+        <targetPath>${project.build.directory}</targetPath>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>log4j.properties</include>
+        </includes>
+      </resource>
       <resource>
         <directory>resources</directory>
       </resource>
     </resources>
-    <finalName>cooccurence-${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -42,12 +51,44 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <version>2.7.4</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hadoop-hdfs</artifactId>
+          <groupId>org.apache.hadoop</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hadoop-mapreduce-client-app</artifactId>
+          <groupId>org.apache.hadoop</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hadoop-yarn-api</artifactId>
+          <groupId>org.apache.hadoop</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hadoop-mapreduce-client-core</artifactId>
+          <groupId>org.apache.hadoop</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+          <groupId>org.apache.hadoop</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.apache.mrunit</groupId>
       <artifactId>mrunit</artifactId>
       <version>1.1.0</version>
       <classifier>hadoop2</classifier>
       <scope>test</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>junit</artifactId>
+          <groupId>junit</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>mockito-core</artifactId>
           <groupId>org.mockito</groupId>
@@ -68,7 +109,7 @@
     </dependency>
   </dependencies>
   <properties>
-    <hadoop.version>3.1.1</hadoop.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.souceEncoding>UTF-8</project.build.souceEncoding>
+    <hadoop.version>2.8.3</hadoop.version>
   </properties>
 </project>

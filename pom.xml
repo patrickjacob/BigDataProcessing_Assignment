@@ -10,27 +10,37 @@
     <packaging>jar</packaging>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hadoop.version>3.1.1</hadoop.version>
+        <project.build.souceEncoding>UTF-8</project.build.souceEncoding>
+        <hadoop.version>2.8.3</hadoop.version>
     </properties>
 
-    <dependencies>
+    <scm>
+        <connection>scm:git:git@github.com:patrickjacob/BigDataProcessing_Assignment.git</connection>
+        <url>git@github.com:patrickjacob/BigDataProcessing_Assignment.git</url>
+    </scm>
 
-        <!-- hadoop -->
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.11.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.11.1</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
-            <version>2.8.3</version>
+            <version>${hadoop.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-hdfs</artifactId>
-            <version>2.8.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
-            <version>2.8.3</version>
+            <artifactId>hadoop-client</artifactId>
+            <version>2.7.4</version>
+            <scope>provided</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.mrunit/mrunit -->
         <dependency>
@@ -40,24 +50,21 @@
             <classifier>hadoop2</classifier>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.netpreserve.commons/webarchive-commons -->
-        <dependency>
-            <groupId>org.netpreserve.commons</groupId>
-            <artifactId>webarchive-commons</artifactId>
-            <version>1.1.8</version>
-        </dependency>
-
-
     </dependencies>
 
     <build>
-        <sourceDirectory>src/</sourceDirectory>
         <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}</targetPath>
+                <includes>
+                    <include>log4j.properties</include>
+                </includes>
+            </resource>
             <resource>
                 <directory>resources</directory>
             </resource>
         </resources>
-        <finalName>cooccurence-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

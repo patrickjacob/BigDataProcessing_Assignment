@@ -14,8 +14,6 @@ import java.util.List;
  */
 public class PairsReducerTest {
 
-    private PairsReducer reducer = new PairsReducer();
-
     @Test
     public void testReducer() throws Exception {
         List<IntWritable> counts = new ArrayList<IntWritable>();

@@ -19,7 +19,7 @@ public class PairsOccurrenceMapperTest {
     public void testMapValidInput() throws Exception {
         String text1 = "The quick        brown                   fox           jumped over the lazy dog";
         new MapDriver<LongWritable,Text, pjdk.coocurrance.WordPair,IntWritable>()
-               .withMapper(new pjdk.coocurrance.PairsOccurrenceMapper())
+               .withMapper(new pjdk.coocurrance.PairsOccurrenceMapperWet())
                .withInput(new LongWritable(1L), new Text(text1))
                .withOutput(wp("The", "quick"), one)
                .withOutput(wp("The","brown"),one)
@@ -62,7 +62,7 @@ public class PairsOccurrenceMapperTest {
     @Test
     public void testOneTokenInput() throws Exception {
         new MapDriver<LongWritable,Text, pjdk.coocurrance.WordPair,IntWritable>()
-            .withMapper(new pjdk.coocurrance.PairsOccurrenceMapper())
+            .withMapper(new pjdk.coocurrance.PairsOccurrenceMapperWet())
             .withInput(new LongWritable(1L),new Text("Foo    "))
             .runTest();
     }
@@ -70,7 +70,7 @@ public class PairsOccurrenceMapperTest {
     @Test
     public void testAllWhitespaceInput() throws Exception {
         new MapDriver<LongWritable,Text, pjdk.coocurrance.WordPair,IntWritable>()
-                .withMapper(new pjdk.coocurrance.PairsOccurrenceMapper())
+                .withMapper(new pjdk.coocurrance.PairsOccurrenceMapperWet())
                 .withInput(new LongWritable(1L),new Text("                  " +
                         "                   "))
                 .runTest();

@@ -66,7 +66,7 @@ public class CoOccurrenceDriverWet extends Configured implements Tool {
         if (args[0].equalsIgnoreCase("pairs")) {
             job.setOutputKeyClass(WordPair.class);
             job.setOutputValueClass(IntWritable.class);
-            returnCode = doMapReduce(job, args[1], PairsOccurrenceMapper.class, "pairs", "pairs-co-occur",
+            returnCode = doMapReduce(job, args[1], PairsOccurrenceMapperWet.class, "pairs", "pairs-co-occur",
                     PairsReducer.class, conf);
         } else if (args[0].equalsIgnoreCase("stripes")) {
             job.setOutputKeyClass(Text.class);

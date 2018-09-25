@@ -4,6 +4,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
@@ -13,11 +14,14 @@ import java.io.IOException;
  * Time: 1:31 AM
  */
 public class PairsOccurrenceMapper extends Mapper<LongWritable, Text, WordPair, IntWritable> {
+    private static final Logger logger = Logger.getLogger(PairsOccurrenceMapper.class);
+
     private WordPair wordPair = new WordPair();
     private IntWritable ONE = new IntWritable(1);
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        logger.info("running mapper");
         int neighbors = context.getConfiguration().getInt("neighbors", 2);
         String[] tokens = value.toString().split("\\s+");
         if (tokens.length > 1) {

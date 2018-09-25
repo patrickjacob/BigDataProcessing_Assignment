@@ -109,7 +109,6 @@
     </dependency>
   </dependencies>
   <properties>
-    <project.build.souceEncoding>UTF-8</project.build.souceEncoding>
     <hadoop.version>2.8.3</hadoop.version>
   </properties>
 </project>

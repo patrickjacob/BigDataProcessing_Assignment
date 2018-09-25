@@ -15,55 +15,76 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+
 
 /**
- * User: Bill Bejeck
- * Date: 9/10/12
- * Time: 9:42 PM
+ *  // start measurement for vertexes addition to a graph
+ * initData();
+ * endTime = System.nanoTime();
+ * System.out.println(" Init Time: " + ((double) (endTime - startTime)) / Math.pow(10, 9) + " sec");
  */
 public class CoOccurrenceDriverWet extends Configured implements Tool {
-    private static final Logger log = Logger.getLogger(CoOccurrenceDriverWet.class);
+
+    private static final Logger logger = Logger.getLogger(CoOccurrenceDriverWet.class);
 
     @SuppressWarnings("Duplicates")
     public static void main(String[] args) throws Exception {
+        // programmatically overriding log properties as can't access properties file for hadoop runner
+        FileAppender fa = new FileAppender();
+        fa.setName("FileLogger");
+        fa.setFile("mylog.log");
+        fa.setLayout(new PatternLayout("%d %-5p [%c{1}] %m%n"));
+        fa.setThreshold(Level.INFO);
+        fa.setAppend(true);
+        fa.activateOptions();
+        logger.addAppender(fa);
+        // output start to the console
+        logger.info("running co-occurence counter (info): " + args[0]);
+        long startTime = System.nanoTime();
         int res = ToolRunner.run(new Configuration(), new CoOccurrenceDriverWet(), args);
+        double runtime = (System.nanoTime() - startTime / Math.pow(10, 9));
+        logger.info("Job Running Time: " + runtime);
+
         System.exit(res);
     }
 
-
-    @SuppressWarnings("Duplicates")
     @Override
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
         Job job = Job.getInstance(conf);
         job.setJarByClass(CoOccurrenceDriverWet.class);
-        job.setNumReduceTasks(1);
+        job.setNumReduceTasks(3); // 3 is the most optimal set up with original setup
 
         job.setOutputFormatClass(TextOutputFormat.class);
+
+        int returnCode = 1;
 
         if (args[0].equalsIgnoreCase("pairs")) {
             job.setOutputKeyClass(WordPair.class);
             job.setOutputValueClass(IntWritable.class);
-            doMapReduce(job, args[1], PairsOccurrenceMapper.class, "pairs", "pairs-co-occur",
+            returnCode = doMapReduce(job, args[1], PairsOccurrenceMapper.class, "pairs", "pairs-co-occur",
                     PairsReducer.class, conf);
         } else if (args[0].equalsIgnoreCase("stripes")) {
             job.setOutputKeyClass(Text.class);
             job.setOutputValueClass(MapWritable.class);
-            doMapReduce(job, args[1], StripesOccurrenceMapper.class, "stripes", "stripes co-occur",
+            returnCode = doMapReduce(job, args[1], StripesOccurrenceMapper.class, "stripes", "stripes- co-occur",
                     StripesReducer.class, conf);
         }
 
-        return 0;
+        return returnCode;
     }
 
-    @SuppressWarnings("Duplicates")
-    private static void doMapReduce(Job job,
-                                    String path,
-                                    Class<? extends Mapper> mapperClass,
-                                    String outPath, String jobName,
-                                    Class<? extends Reducer> reducerClass,
-                                    Configuration conf) throws Exception {
+
+    private static int doMapReduce(Job job,
+                                   String path,
+                                   Class<? extends Mapper> mapperClass,
+                                   String outPath, String jobName,
+                                   Class<? extends Reducer> reducerClass,
+                                   Configuration conf) throws Exception {
         try {
 
             // output path setup
@@ -73,17 +94,16 @@ public class CoOccurrenceDriverWet extends Configured implements Tool {
                 fs.delete(new Path(outputPath), true);
             }
 
-
             job.setJobName(jobName);
             FileInputFormat.addInputPath(job, new Path(path));
             FileOutputFormat.setOutputPath(job, new Path(outputPath));
             job.setMapperClass(mapperClass);
             job.setReducerClass(reducerClass);
             job.setCombinerClass(reducerClass);
-            System.exit(job.waitForCompletion(true) ? 0 : 1);
+            return job.waitForCompletion(true) ? 0 : 1;
         } catch (Exception e) {
-            log.error("Error running MapReduce Job", e);
+            logger.error("Error running MapReduce Job", e);
+            return 1;
         }
     }
-
 }

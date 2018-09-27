@@ -22,9 +22,11 @@
 hs_err_pid*
 
 # User-specific stuff:
-
+data/
 
 # IntelliJ
 out/
 /.idea/
 *.iml
+src/test/Original Code/
+swap/

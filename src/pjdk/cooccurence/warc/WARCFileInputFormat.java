@@ -1,4 +1,4 @@
-package cooccurence;
+package pjdk.cooccurence.warc;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -24,7 +24,7 @@ public class WARCFileInputFormat extends FileInputFormat<Text, ArchiveReader> {
 			throws IOException, InterruptedException {
 		return new WARCFileRecordReader();
 	}
-
+	
 	@Override
 	protected boolean isSplitable(JobContext context, Path filename) {
 		// As these are compressed files, they cannot be (sanely) split

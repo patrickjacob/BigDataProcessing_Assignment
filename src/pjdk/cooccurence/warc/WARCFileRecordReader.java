@@ -1,10 +1,8 @@
-package cooccurence;
-
-import java.io.IOException;
+package pjdk.cooccurence.warc;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -13,6 +11,8 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.archive.io.ArchiveReader;
 import org.archive.io.warc.WARCReaderFactory;
+
+import java.io.IOException;
 
 /**
  * The WARC File Record Reader processes a single compressed input.

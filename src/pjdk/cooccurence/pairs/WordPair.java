@@ -1,4 +1,4 @@
-package pjdk.coocurrance;
+package pjdk.cooccurence.pairs;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
@@ -13,9 +13,9 @@ import java.io.IOException;
  * Date: 11/24/12
  * Time: 12:55 AM
  */
-public class WordPair implements Writable,WritableComparable<WordPair> {
-
+public class WordPair implements Writable, WritableComparable<WordPair> {
     private Text word;
+
     private Text neighbor;
 
     public WordPair(Text word, Text neighbor) {
@@ -24,7 +24,7 @@ public class WordPair implements Writable,WritableComparable<WordPair> {
     }
 
     public WordPair(String word, String neighbor) {
-        this(new Text(word),new Text(neighbor));
+        this(new Text(word), new Text(neighbor));
     }
 
     public WordPair() {
@@ -32,20 +32,20 @@ public class WordPair implements Writable,WritableComparable<WordPair> {
         this.neighbor = new Text();
     }
 
+    public void setWord(String word) {
+        this.word.set(word);
+    }
 
+    public void setNeighbor(String neighbor) {
+        this.neighbor.set(neighbor);
+    }
 
+    public Text getWord() {
+        return word;
+    }
 
-    public int compareTo(WordPair other) {
-        int returnVal = this.word.compareTo(other.getWord());
-        if(returnVal != 0){
-            return returnVal;
-        }
-        if(this.neighbor.toString().equals("*")){
-            return -1;
-        }else if(other.getNeighbor().toString().equals("*")){
-            return 1;
-        }
-        return this.neighbor.compareTo(other.getNeighbor());
+    public Text getNeighbor() {
+        return neighbor;
     }
 
     public static WordPair read(DataInput in) throws IOException {
@@ -65,9 +65,23 @@ public class WordPair implements Writable,WritableComparable<WordPair> {
     }
 
     @Override
+    public int compareTo(WordPair other) {
+        int returnVal = this.word.compareTo(other.getWord());
+        if (returnVal != 0) {
+            return returnVal;
+        }
+        if (this.neighbor.toString().equals("*")) {
+            return -1;
+        } else if (other.getNeighbor().toString().equals("*")) {
+            return 1;
+        }
+        return this.neighbor.compareTo(other.getNeighbor());
+    }
+
+    @Override
     public String toString() {
-        return "{word=["+word+"]"+
-               " neighbor=["+neighbor+"]}";
+        return "{word=[" + word + "]" +
+                " neighbor=[" + neighbor + "]}";
     }
 
     @Override
@@ -86,22 +100,7 @@ public class WordPair implements Writable,WritableComparable<WordPair> {
     @Override
     public int hashCode() {
         int result = word != null ? word.hashCode() : 0;
-        result = 163 * result + (neighbor != null ? neighbor.hashCode() : 0);
+        result = 197 * result + (neighbor != null ? neighbor.hashCode() : 0); //197 - prime number
         return result;
-    }
-
-    public void setWord(String word){
-        this.word.set(word);
-    }
-    public void setNeighbor(String neighbor){
-        this.neighbor.set(neighbor);
-    }
-
-    public Text getWord() {
-        return word;
-    }
-
-    public Text getNeighbor() {
-        return neighbor;
     }
 }

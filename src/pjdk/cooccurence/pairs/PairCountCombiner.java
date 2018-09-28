@@ -87,7 +87,7 @@ public class PairCountCombiner extends Configured implements Tool {
         // The reducer is quite useful in the word frequency task
         job.setReducerClass(LongSumReducer.class);
 
-        // set the combiner class. Should be thje same as reducer
+        // set the combiner class. Should be the same as reducer
         job.setCombinerClass(LongSumReducer.class);
 
         return job.waitForCompletion(true) ? 0 : 1;

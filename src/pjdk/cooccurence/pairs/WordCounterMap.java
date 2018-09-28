@@ -8,9 +8,11 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
+import pjdk.cooccurence.pairsshared.WordPair;
 
 import java.io.IOException;
 
+@SuppressWarnings("Duplicates")
 public class WordCounterMap {
     private static final Logger logger = Logger.getLogger(WordCounterMap.class);
 
@@ -21,7 +23,7 @@ public class WordCounterMap {
         NON_PLAIN_TEXT
     }
 
-    protected static class WordCountMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
+    protected static class CoOccurrenceMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
         private String[] tokens;
         private WordPair outKey = new WordPair();
         private LongWritable outVal = new LongWritable(1);
@@ -43,7 +45,7 @@ public class WordCounterMap {
                         byte[] rawData = IOUtils.toByteArray(r, r.available());
                         String content = new String(rawData);
                         // Grab each word from the document
-                        tokens = content.split("[\\W\\r\\n\\s\\d_MV]+");
+                        tokens = content.split("[\\W\\r\\n\\s\\d_]+");
                         /*
                         Match a single character present in the list below [\W\r\n\s\d]
                         \W matches any non-word character (equal to [^a-zA-Z0-9_])

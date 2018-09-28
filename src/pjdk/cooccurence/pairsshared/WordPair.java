@@ -1,4 +1,4 @@
-package pjdk.cooccurence.pairs;
+package pjdk.cooccurence.pairsshared;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
@@ -8,11 +8,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-/**
- * User: Bill Bejeck
- * Date: 11/24/12
- * Time: 12:55 AM
- */
+@SuppressWarnings("Duplicates")
 public class WordPair implements Writable, WritableComparable<WordPair> {
     private Text word;
 

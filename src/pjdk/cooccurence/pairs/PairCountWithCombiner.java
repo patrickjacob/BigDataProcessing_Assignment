@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
 
 
 @SuppressWarnings("Duplicates")
-public class PairsCount extends Configured implements Tool {
+public class PairCountWithCombiner extends Configured implements Tool {
 
-    private static final Logger logger = Logger.getLogger(PairsCountWithPartitioner.class);
+    private static final Logger logger = Logger.getLogger(PairCountWithCombiner.class);
 
     static {
         FileAppender fa = new FileAppender();
@@ -40,7 +40,7 @@ public class PairsCount extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {
         long runtime = System.nanoTime();
-        int res = ToolRunner.run(new Configuration(), new PairsCountWithPartitioner(), args);
+        int res = ToolRunner.run(new Configuration(), new PairCountWithCombiner(), args);
         runtime = System.nanoTime() - runtime;
         runtime = TimeUnit.SECONDS.convert(runtime, TimeUnit.NANOSECONDS);
         logger.info(String.format("Job Running Time: %d:%d with %d reducers",
@@ -57,7 +57,7 @@ public class PairsCount extends Configured implements Tool {
         //
         Job job = Job.getInstance(conf);
         job.setJobName("WordPair Co-occurrence");
-        job.setJarByClass(PairsCountWithPartitioner.class);
+        job.setJarByClass(PairCountWithCombiner.class);
         job.setNumReduceTasks(Integer.parseInt(arg0[1].isEmpty() ? "1" : arg0[1] ));
 
         // input path setup
@@ -86,6 +86,9 @@ public class PairsCount extends Configured implements Tool {
         job.setMapperClass(WordCounterMap.CoOccurrenceMapper.class);
         // The reducer is quite useful in the word frequency task
         job.setReducerClass(LongSumReducer.class);
+
+        // set the combiner class. Should be the same as reducer
+        job.setCombinerClass(LongSumReducer.class);
 
         return job.waitForCompletion(true) ? 0 : 1;
     }

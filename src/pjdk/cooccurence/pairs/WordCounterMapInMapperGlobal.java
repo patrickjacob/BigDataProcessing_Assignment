@@ -10,18 +10,20 @@ import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * mapper for gzip archived file, map all headers and constructs
  * co-occurrence of predefined window value of 2
  *
  * @author dimz, patrick
- * @since 22/9/18.
  * @version 1.0
+ * @since 22/9/18.
  */
-
-public class WordCounterMap {
-    private static final Logger logger = Logger.getLogger(WordCounterMap.class);
+@SuppressWarnings("Duplicates")
+public class WordCounterMapInMapperGlobal {
+    private static final Logger logger = Logger.getLogger(WordCounterMapInMapperGlobal.class);
 
     private static final int WINDOW_SIZE = 2;
 
@@ -33,25 +35,33 @@ public class WordCounterMap {
         NON_PLAIN_TEXT
     }
 
-    protected static class CoOccurrenceMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
-        private String[] tokens;
-        private WordPair outKey = new WordPair();
-        private LongWritable outVal = new LongWritable(1);
+    protected static class CoOccurrenceMapperInMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
 
         static {
             logger.setLevel(Level.DEBUG);
         }
 
+        // flushing frequency
+        private static final int FLUSH_SIZE = 1000;
+
+        // global in map approach. potentially will trigger out of memory error
+        private Map<WordPair, Long> inMapperMap;
+
         /**
          * mapper function
-         * @param key not used in method,  id of WARC file
+         *
+         * @param key   not used in method,  id of WARC file
          * @param value pointer to WARC file
          */
         @Override
         public void map(Text key, ArchiveReader value, Context context)
-                throws IOException, InterruptedException {
+                throws IOException, InterruptedException{
             int neighbors = context.getConfiguration().getInt("neighbors", WINDOW_SIZE);
             logger.warn("running mapper in: " + this.getClass().getSimpleName());
+            Map<WordPair, Long> inMapperMap = getInMapperMap();
+
+            String[] tokens;
+
             for (ArchiveRecord r : value) {
                 try {
                     if (r.getHeader().getMimetype().equals("text/plain")) {
@@ -69,21 +79,28 @@ public class WordCounterMap {
                         \s matches any whitespace character (equal to [\r\n\t\f\v ])
                         \d matches a digit (equal to [0-9])
                          */
+
                         tokens = content.split("[\\W\\r\\n\\s\\d_]+");
                         if (tokens.length == 0) {
                             context.getCounter(MAPPERCOUNTER.EMPTY_PAGE_TEXT).increment(1);
                         } else {
-                            for (int i = 0; i < tokens.length; i++) { // skip one letter words
-                                if (tokens[i].length() < 2) continue;
-                                outKey.setWord(tokens[i]);
+                            // implementing an in-map optimizer
+                            for (int i = 0; i < tokens.length; i++) {
+                                if (tokens[i].length() < 2) continue;  // skip one letter words
                                 int start = (i - neighbors < 0) ? 0 : i - neighbors;
                                 int end = (i + neighbors >= tokens.length) ? tokens.length - 1 : i + neighbors;
                                 for (int j = start; j <= end; j++) {
                                     if (j == i || tokens[j].length() < 2) continue;
-                                    outKey.setNeighbor(tokens[j]);
-                                    context.write(outKey, outVal);
+                                    WordPair wordPair = new WordPair(tokens[i], tokens[j]);
+                                    if (inMapperMap.containsKey(wordPair)) {
+                                        long total = inMapperMap.get(wordPair) + 1;
+                                        inMapperMap.put(wordPair, total);
+                                    } else {
+                                        inMapperMap.put(wordPair, 1L);
+                                    }
                                 }
                             }
+                            flush(context, false);
                         }
                     } else {
                         context.getCounter(MAPPERCOUNTER.NON_PLAIN_TEXT).increment(1);
@@ -93,6 +110,32 @@ public class WordCounterMap {
                     context.getCounter(MAPPERCOUNTER.EXCEPTIONS).increment(1);
                 }
             }
+        }
+
+        @Override
+        protected void cleanup(Context context) throws IOException, InterruptedException {
+            // output map to context
+            flush(context, true);
+        }
+
+        private void flush(Context context, boolean force) throws IOException, InterruptedException {
+            Map<WordPair, Long> inMapperMap = getInMapperMap();
+            if(!force) {
+                if(inMapperMap.size() < FLUSH_SIZE)
+                    return;
+            }
+            for (Map.Entry<WordPair, Long> inMapperMapEntry : inMapperMap.entrySet()) {
+                context.write(inMapperMapEntry.getKey(), new LongWritable(inMapperMapEntry.getValue()));
+            }
+            inMapperMap.clear();
+
+        }
+
+        public Map<WordPair, Long> getInMapperMap() {
+            if (null == inMapperMap) {//lazy loading
+                inMapperMap = new HashMap<>();
+            }
+            return inMapperMap;
         }
     }
 }

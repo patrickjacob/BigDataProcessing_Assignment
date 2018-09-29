@@ -24,9 +24,9 @@ import java.util.concurrent.TimeUnit;
  * @since 22/9/18.
  */
 @SuppressWarnings("Duplicates")
-public class PairsCountWithPartitioner extends Configured implements Tool {
+public class PairsCountInMapGlobal extends Configured implements Tool {
 
-    private static final Logger logger = Logger.getLogger(PairsCountWithPartitioner.class);
+    private static final Logger logger = Logger.getLogger(PairsCountInMapGlobal.class);
 
     static {
         FileAppender fa = new FileAppender();
@@ -41,7 +41,7 @@ public class PairsCountWithPartitioner extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {
         long runtime = System.nanoTime();
-        int res = ToolRunner.run(new Configuration(), new PairsCountWithPartitioner(), args);
+        int res = ToolRunner.run(new Configuration(), new PairsCountInMapGlobal(), args);
         runtime = System.nanoTime() - runtime;
         runtime = TimeUnit.SECONDS.convert(runtime, TimeUnit.NANOSECONDS);
         logger.info(String.format("Job Running Time: %d:%d with %d reducers",
@@ -55,9 +55,10 @@ public class PairsCountWithPartitioner extends Configured implements Tool {
     @Override
     public int run(String[] arg0) throws Exception {
         Configuration conf = getConf();
+        //
         Job job = Job.getInstance(conf);
         job.setJobName("WordPair Co-occurrence " + this.getClass().getSimpleName());
-        job.setJarByClass(PairsCountWithPartitioner.class);
+        job.setJarByClass(PairsCountInMapGlobal.class);
         job.setNumReduceTasks(Integer.parseInt(arg0.length > 0 ? arg0[1] : "1"));
 
         // input path setup
@@ -83,10 +84,7 @@ public class PairsCountWithPartitioner extends Configured implements Tool {
         job.setOutputKeyClass(WordPair.class);
         job.setOutputValueClass(LongWritable.class);
 
-        job.setMapperClass(WordCounterMap.CoOccurrenceMapper.class);
-        // set partitioner
-        job.setPartitionerClass(PairsCountPartitioner.class);
-
+        job.setMapperClass(WordCounterMapInMapperGlobal.CoOccurrenceMapperInMapper.class);
         // The reducer is quite useful in the word frequency task
         job.setReducerClass(PairReducer.class);
 

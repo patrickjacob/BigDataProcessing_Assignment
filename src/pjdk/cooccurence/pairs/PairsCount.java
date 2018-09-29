@@ -47,7 +47,7 @@ public class PairsCount extends Configured implements Tool {
         logger.info(String.format("Job Running Time: %d:%d with %d reducers",
                 runtime / 60,
                 runtime % 60,
-                Integer.parseInt(args[1].isEmpty() ? "1" : args[1] ))
+                Integer.parseInt(args.length > 0 ? args[1] : "1"))
         );
         System.exit(res);
     }

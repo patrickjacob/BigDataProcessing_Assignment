@@ -30,21 +30,18 @@ public class PairsCountPartitioner
             return 0;
         }
         char firsLetter = wordPair.getWord().toString().toLowerCase().charAt(0);
-        int requiredReturns = numReduceTasks + 1; // how many splits required
         int letterInAlphabet = alphabet.indexOf(firsLetter);
-        int commonMultiplier = alphabet.length()/requiredReturns;
 
-        for (int i = 0; i < requiredReturns; i++) {
-            if (letterInAlphabet < commonMultiplier * (i+1)){
-                logger.debug(
-                        firsLetter +
-                        " as first letter, directed to partition " +
-                        Integer.toString(i % numReduceTasks)
-                );
-                return i % numReduceTasks;
-            }
+        if(letterInAlphabet < 8){
+            return 0;
+        } else if (letterInAlphabet >= 9 && letterInAlphabet <=17) {
+            return 1 % numReduceTasks;
+        } else {
+            return 2 % numReduceTasks;
         }
-        // if reached this point then its the last alphabet section
-        return 0;
+
+
+
+
     }
 }

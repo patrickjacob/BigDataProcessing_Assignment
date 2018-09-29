@@ -8,15 +8,23 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
-import pjdk.cooccurence.pairsshared.WordPair;
 
-import java.io.IOException;
+/**
+ * mapper for gzip archived file, map all headers and constructs
+ * co-occurrence of predefined window value of 2
+ *
+ * @author dimz, patrick
+ * @since 22/9/18.
+ * @version 1.0
+ */
 
-@SuppressWarnings("Duplicates")
 public class WordCounterMap {
     private static final Logger logger = Logger.getLogger(WordCounterMap.class);
 
-    protected static enum MAPPERCOUNTER {
+    private static final int WINDOW_SIZE = 2;
+
+    // counters visible in job on hue
+    protected enum MAPPERCOUNTER {
         RECORDS_IN,
         EMPTY_PAGE_TEXT,
         EXCEPTIONS,
@@ -32,9 +40,14 @@ public class WordCounterMap {
             logger.setLevel(Level.DEBUG);
         }
 
+        /**
+         * mapper function
+         * @param key not used in method,  id of WARC file
+         * @param value pointer to WARC file
+         */
         @Override
-        public void map(Text key, ArchiveReader value, Context context) throws IOException {
-            int neighbors = context.getConfiguration().getInt("neighbors", 2);
+        public void map(Text key, ArchiveReader value, Context context) {
+            int neighbors = context.getConfiguration().getInt("neighbors", WINDOW_SIZE);
             logger.warn("running mapper in: " + this.getClass().getSimpleName());
             for (ArchiveRecord r : value) {
                 try {
@@ -45,8 +58,7 @@ public class WordCounterMap {
                         byte[] rawData = IOUtils.toByteArray(r, r.available());
                         String content = new String(rawData);
                         // Grab each word from the document
-                        tokens = content.split("[\\W\\r\\n\\s\\d_]+");
-                        /*
+                         /*
                         Match a single character present in the list below [\W\r\n\s\d]
                         \W matches any non-word character (equal to [^a-zA-Z0-9_])
                         \r matches a carriage return (ASCII 13)
@@ -54,11 +66,11 @@ public class WordCounterMap {
                         \s matches any whitespace character (equal to [\r\n\t\f\v ])
                         \d matches a digit (equal to [0-9])
                          */
+                        tokens = content.split("[\\W\\r\\n\\s\\d_]+");
                         if (tokens.length == 0) {
                             context.getCounter(MAPPERCOUNTER.EMPTY_PAGE_TEXT).increment(1);
                         } else {
-                            for (int i = 0; i < tokens.length; i++) {
-                                // skip letters
+                            for (int i = 0; i < tokens.length; i++) { // skip one letter words
                                 if (tokens[i].length() < 2) continue;
                                 outKey.setWord(tokens[i]);
                                 int start = (i - neighbors < 0) ? 0 : i - neighbors;

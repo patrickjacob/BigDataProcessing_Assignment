@@ -9,19 +9,20 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.hadoop.mapreduce.lib.reduce.LongSumReducer;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import pjdk.cooccurence.pairsshared.WordPair;
 import pjdk.cooccurence.warc.WARCFileInputFormat;
 
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * @author dimz, patrick
+ * @since 22/9/18.
+ */
 @SuppressWarnings("Duplicates")
 public class PairCountWithCombiner extends Configured implements Tool {
 
@@ -56,9 +57,9 @@ public class PairCountWithCombiner extends Configured implements Tool {
         Configuration conf = getConf();
         //
         Job job = Job.getInstance(conf);
-        job.setJobName("WordPair Co-occurrence");
+        job.setJobName("WordPair Co-occurrence " + this.getClass().getSimpleName());
         job.setJarByClass(PairCountWithCombiner.class);
-        job.setNumReduceTasks(Integer.parseInt(arg0[1].isEmpty() ? "1" : arg0[1] ));
+        job.setNumReduceTasks(Integer.parseInt(arg0.length > 0 ? arg0[1] : "1"));
 
         // input path setup
         String inputPath = String.format("%s/*.warc.wet.gz", arg0[0]);
@@ -85,10 +86,10 @@ public class PairCountWithCombiner extends Configured implements Tool {
 
         job.setMapperClass(WordCounterMap.CoOccurrenceMapper.class);
         // The reducer is quite useful in the word frequency task
-        job.setReducerClass(LongSumReducer.class);
+        job.setReducerClass(PairReducer.class);
 
         // set the combiner class. Should be the same as reducer
-        job.setCombinerClass(LongSumReducer.class);
+        job.setCombinerClass(PairReducer.class);
 
         return job.waitForCompletion(true) ? 0 : 1;
     }

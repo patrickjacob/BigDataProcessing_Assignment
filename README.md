@@ -1,6 +1,38 @@
 # BigDataProcessing_Assignment
 Assignment for Big Data Processing - Map Reduce centered 
 
+### How to work with the program on AWS
+1. Login to jump host (e.g. ssh ec2-user@<student_id>.jump.cosc2637.route53.aws.rmit.edu.au -i <path_to_key>/<student_id>-cosc2637.pem)
+2. Initiate cluster (create.sh)
+3. Add jump host to known host for ssh (sed -i '7d' ~/.ssh/known_hosts)
+    Alternatively set back directly in known_host vi /home/ec2-user/.ssh/known_hosts   
+4. Ssh into hadoop - ssh hadoop@<student_id>.emr.cosc2637.route53.aws.rmit.edu.au -i <student_id>-cosc2637.pem
+    - make sure the key on jumphost
+5. Open hue (Website: http://<student_id>.hue.cosc2637.route53.aws.rmit.edu.au:8888)
+6. Get dataset - e.g. wet files - go to server file - S3 - add “commoncrawl” and get a suitable dataset and copy the path 
+7. Copy data set to tmp on cluster
+hadoop distcp s3a://commoncrawl/crawl-data/CC-MAIN-2018-39/segments/1537267155413.17/wet/CC-MAIN-20180918130631-20180918150631-00000.warc.wet.gz /tmp
+8. Upload jar file to hadoop via hue (which means it is on the cluster but has to be still transfered to the master node)
+9. Move jar file to master node - hadoop fs -copyToLocal <path_to_jar>/counter-1.0.1-SNAPSHOT.jar /home/hadoop/ 
+10. Executive the job from master - hadoop jar /home/hadoop/counter-1.0.1-SNAPSHOT.jar <Execution_Option> <path to dataset> <number of mappers>
+
+### Options for Execution
+pjdk.cooccurence.pairs.PairsCount = Plain Pairs Implementation
+pjdk.cooccurence.pairs.PairsCombiner = Pairs Implementation with optional Combiner
+pjdk.cooccurence.pairs.PairsCountPartitioner = Pairs Implementation with optional Partitioner
+pjdk.cooccurence.pairs.PairsCountInMapperCombining = Pairs Implementation with optional in-mapper combiner (for local aggregation)
+
+pjdk.cooccurence.pairs.StripesCount = Plain Stripes Implementation
+pjdk.cooccurence.pairs.StripesCombiner = Stripes Implementation with optional Combiner
+pjdk.cooccurence.pairs.StripesCountPartitioner = Stripes Implementation with optional Partitioner
+pjdk.cooccurence.pairs.PairsCountInMapperCombining = Stripes Implementation with optional in-mapper combiner (for local aggregation)
+
+### How to compile the Program 
+- Make sure Maven is installed on your environment - (brew install maven). 
+- Open Project or go to project root folder where the 'pom' file resides
+- run command: mvn clean package
+- upload counter-1.0.1-SNAPSHOT.jar (usually to find in BigDataProcessing_Assignment/target) to hadoop master node
+
 ### Additional Sources
 [Trelloboard of the project](https://trello.com/b/YUgGpREg)
 
@@ -79,6 +111,7 @@ compare the performance of different optimisations such as pairs, stripes by cha
 dataset size, etc. If you implement this, you can get a fair score. If you further implement local aggregation, 
 partitioner, combiner, you will get a good score.  If you further use multiple datasets from AWS except the common 
 crawl to do above analysis, you will get full mark.
+
 2. Algorithm from Week 6 lecture: k-means over NYC taxi pickup and drop-off points: 
 https://registry.opendata.aws/nyc-tlc-trip-records-pds/ , 
 compare the performance of different optimisations such as partitioner, combiner by cluster number and dataset size, etc. 

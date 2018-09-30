@@ -42,7 +42,7 @@ public class WordCounterMapInMapperGlobal {
         }
 
         // flushing frequency
-        private static final int FLUSH_SIZE = 1000;
+        private static final int FLUSH_SIZE = 10000;
 
         // global in map approach. potentially will trigger out of memory error
         private Map<WordPair, Long> inMapperMap;

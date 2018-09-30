@@ -29,19 +29,6 @@ public class PairsCountPartitioner
             logger.debug("No partitioning - only ONE reducer");
             return 0;
         }
-        char firsLetter = wordPair.getWord().toString().toLowerCase().charAt(0);
-        int letterInAlphabet = alphabet.indexOf(firsLetter);
-
-        if(letterInAlphabet < 8){
-            return 0;
-        } else if (letterInAlphabet >= 9 && letterInAlphabet <=17) {
-            return 1 % numReduceTasks;
-        } else {
-            return 2 % numReduceTasks;
-        }
-
-
-
-
+        return wordPair.getWord().hashCode() % numReduceTasks;
     }
 }

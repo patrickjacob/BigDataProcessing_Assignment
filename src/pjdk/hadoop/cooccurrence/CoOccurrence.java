@@ -68,7 +68,7 @@ public class CoOccurrence extends Configured implements Tool {
         logger.info("Input path: " + inputPath);
         FileInputFormat.addInputPath(job, new Path(inputPath));
 
-        String runnerType = (args.length > 2  && !args[2].isEmpty() ? args[2] : "pair" ).toLowerCase();
+        String runnerType = (args.length > 2  && !args[2].isEmpty() ? args[2] : "occurrence" ).toLowerCase();
 
         String outputPath = String.format("%s/%s/%d/",
                 args[0],
@@ -79,9 +79,9 @@ public class CoOccurrence extends Configured implements Tool {
         if (fs.exists(new Path(outputPath))) {
             fs.delete(new Path(outputPath), true);
         }
-        FileOutputFormat.setOutputPath(job, new Path(outputPath));
         job.setInputFormatClass(WARCFileInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
+        TextOutputFormat.setOutputPath(job, new Path(outputPath));
 
         if(runnerType.contains("occurrence")){
             job.setOutputKeyClass(WordPair.class);

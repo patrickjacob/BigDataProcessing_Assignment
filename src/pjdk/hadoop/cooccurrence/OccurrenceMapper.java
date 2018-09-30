@@ -26,7 +26,7 @@ public class OccurrenceMapper {
     private static final int WINDOW_SIZE = 2;
 
     // counters visible in job on hue
-    protected enum MAPPERCOUNTER {
+    protected enum MAPPER_COUNTER {
         RECORDS_IN,
         EMPTY_PAGE_TEXT,
         EXCEPTIONS,
@@ -55,7 +55,7 @@ public class OccurrenceMapper {
             for (ArchiveRecord r : value) {
                 try {
                     if (r.getHeader().getMimetype().equals("text/plain")) {
-                        context.getCounter(MAPPERCOUNTER.RECORDS_IN).increment(1);
+                        context.getCounter(MAPPER_COUNTER.RECORDS_IN).increment(1);
                         logger.debug(r.getHeader().getUrl() + " -- " + r.available());
                         // Convenience function that reads the full message into a raw byte array
                         byte[] rawData = IOUtils.toByteArray(r, r.available());
@@ -71,7 +71,7 @@ public class OccurrenceMapper {
                          */
                         tokens = content.split("[\\W\\r\\n\\s\\d_]+");
                         if (tokens.length == 0) {
-                            context.getCounter(MAPPERCOUNTER.EMPTY_PAGE_TEXT).increment(1);
+                            context.getCounter(MAPPER_COUNTER.EMPTY_PAGE_TEXT).increment(1);
                         } else {
                             for (int i = 0; i < tokens.length; i++) { // skip one letter words
                                 if (tokens[i].length() < 2) continue;
@@ -86,11 +86,11 @@ public class OccurrenceMapper {
                             }
                         }
                     } else {
-                        context.getCounter(MAPPERCOUNTER.NON_PLAIN_TEXT).increment(1);
+                        context.getCounter(MAPPER_COUNTER.NON_PLAIN_TEXT).increment(1);
                     }
                 } catch (Exception ex) {
                     logger.error("Caught Exception", ex);
-                    context.getCounter(MAPPERCOUNTER.EXCEPTIONS).increment(1);
+                    context.getCounter(MAPPER_COUNTER.EXCEPTIONS).increment(1);
                 }
             }
         }

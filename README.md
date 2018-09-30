@@ -14,18 +14,17 @@ Assignment for Big Data Processing - Map Reduce centered
 hadoop distcp s3a://commoncrawl/crawl-data/CC-MAIN-2018-39/segments/1537267155413.17/wet/CC-MAIN-20180918130631-20180918150631-00000.warc.wet.gz /tmp
 8. Upload jar file to hadoop via hue (which means it is on the cluster but has to be still transfered to the master node)
 9. Move jar file to master node - hadoop fs -copyToLocal <path_to_jar>/counter-1.0.1-SNAPSHOT.jar /home/hadoop/ 
-10. Executive the job from master - hadoop jar /home/hadoop/counter-1.0.1-SNAPSHOT.jar <Execution_Option> <path to dataset> <number of mappers>
+10. Executive the job from master - hadoop jar /home/hadoop/counter-1.0.1-SNAPSHOT.jar pjdk.hadoop.cooccurrence.CoOccurrence <path to dataset> <number of mappers> <Execution_Option> 
 
 ### Options for Execution
-pjdk.cooccurence.pairs.PairsCount = Plain Pairs Implementation
-pjdk.cooccurence.pairs.PairsCombiner = Pairs Implementation with optional Combiner
-pjdk.cooccurence.pairs.PairsCountPartitioner = Pairs Implementation with optional Partitioner
-pjdk.cooccurence.pairs.PairsCountInMapperCombining = Pairs Implementation with optional in-mapper combiner (for local aggregation)
+occurrence = Plain Pairs Implementation
+occurrencecombiner = Pairs Implementation with optional Combiner
+occurrencepartitioner = Pairs Implementation with optional Partitioner
+occurrenceinmaplocal = Pairs Implementation with optional in-mapper combiner (for local aggregation)
+occurrenceinmapglobal = Pairs Implementation with optional in-mapper combiner (for local aggregation)
 
-pjdk.cooccurence.pairs.StripesCount = Plain Stripes Implementation
-pjdk.cooccurence.pairs.StripesCombiner = Stripes Implementation with optional Combiner
-pjdk.cooccurence.pairs.StripesCountPartitioner = Stripes Implementation with optional Partitioner
-pjdk.cooccurence.pairs.PairsCountInMapperCombining = Stripes Implementation with optional in-mapper combiner (for local aggregation)
+stripes = Plain Stripes Implementation
+stripescombiner = Stripes Implementation with optional Combiner
 
 ### How to compile the Program 
 - Make sure Maven is installed on your environment - (brew install maven). 

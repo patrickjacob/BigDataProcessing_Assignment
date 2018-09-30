@@ -1,4 +1,4 @@
-package pjdk.cooccurence.pairs;
+package pjdk.hadoop.cooccurrence;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.io.LongWritable;
@@ -22,8 +22,8 @@ import java.util.Map;
  * @since 22/9/18.
  */
 @SuppressWarnings("Duplicates")
-public class WordCounterMapInMapperGlobal {
-    private static final Logger logger = Logger.getLogger(WordCounterMapInMapperGlobal.class);
+public class OccurrenceMapperInMapperGlobal {
+    private static final Logger logger = Logger.getLogger(OccurrenceMapperInMapperGlobal.class);
 
     private static final int WINDOW_SIZE = 2;
 
@@ -56,7 +56,7 @@ public class WordCounterMapInMapperGlobal {
         @Override
         public void map(Text key, ArchiveReader value, Context context)
                 throws IOException, InterruptedException{
-            int neighbors = context.getConfiguration().getInt("neighbors", WINDOW_SIZE);
+            int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
             logger.warn("running mapper in: " + this.getClass().getSimpleName());
             Map<WordPair, Long> inMapperMap = getInMapperMap();
 
@@ -87,8 +87,8 @@ public class WordCounterMapInMapperGlobal {
                             // implementing an in-map optimizer
                             for (int i = 0; i < tokens.length; i++) {
                                 if (tokens[i].length() < 2) continue;  // skip one letter words
-                                int start = (i - neighbors < 0) ? 0 : i - neighbors;
-                                int end = (i + neighbors >= tokens.length) ? tokens.length - 1 : i + neighbors;
+                                int start = (i - neighbours < 0) ? 0 : i - neighbours;
+                                int end = (i + neighbours >= tokens.length) ? tokens.length - 1 : i + neighbours;
                                 for (int j = start; j <= end; j++) {
                                     if (j == i || tokens[j].length() < 2) continue;
                                     WordPair wordPair = new WordPair(tokens[i], tokens[j]);

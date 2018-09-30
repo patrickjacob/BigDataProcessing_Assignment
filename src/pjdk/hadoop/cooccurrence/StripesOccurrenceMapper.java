@@ -1,42 +1,39 @@
-package pjdk.cooccurence.pairs;
+package pjdk.hadoop.cooccurrence;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
 
+
 import java.io.IOException;
 
 /**
- * mapper for gzip archived file, map all headers and constructs
- * co-occurrence of predefined window value of 2
- *
  * @author dimz, patrick
- * @since 22/9/18.
- * @version 1.0
+ * @since 30/9/18.
  */
-
-public class WordCounterMap {
-    private static final Logger logger = Logger.getLogger(WordCounterMap.class);
+@SuppressWarnings("Duplicates")
+public class StripesOccurrenceMapper {
+    private static Logger logger = LogManager.getLogger(StripesOccurrenceMapper.class);
 
     private static final int WINDOW_SIZE = 2;
 
-    // counters visible in job on hue
-    protected enum MAPPERCOUNTER {
+    protected enum STRIPES_MAPPER_COUNTER {
         RECORDS_IN,
         EMPTY_PAGE_TEXT,
         EXCEPTIONS,
         NON_PLAIN_TEXT
     }
 
-    protected static class CoOccurrenceMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
-        private String[] tokens;
-        private WordPair outKey = new WordPair();
-        private LongWritable outVal = new LongWritable(1);
+    protected static class StripesCoOccurrenceMapper extends Mapper<Text, ArchiveReader, Text, MapWritable> {
+        private MapWritable occurrenceMap = new MapWritable();
+        private Text word = new Text();
 
         static {
             logger.setLevel(Level.DEBUG);
@@ -50,12 +47,12 @@ public class WordCounterMap {
         @Override
         public void map(Text key, ArchiveReader value, Context context)
                 throws IOException, InterruptedException {
-            int neighbors = context.getConfiguration().getInt("neighbors", WINDOW_SIZE);
+            int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
             logger.warn("running mapper in: " + this.getClass().getSimpleName());
             for (ArchiveRecord r : value) {
                 try {
                     if (r.getHeader().getMimetype().equals("text/plain")) {
-                        context.getCounter(MAPPERCOUNTER.RECORDS_IN).increment(1);
+                        context.getCounter(STRIPES_MAPPER_COUNTER.RECORDS_IN).increment(1);
                         logger.debug(r.getHeader().getUrl() + " -- " + r.available());
                         // Convenience function that reads the full message into a raw byte array
                         byte[] rawData = IOUtils.toByteArray(r, r.available());
@@ -69,28 +66,35 @@ public class WordCounterMap {
                         \s matches any whitespace character (equal to [\r\n\t\f\v ])
                         \d matches a digit (equal to [0-9])
                          */
-                        tokens = content.split("[\\W\\r\\n\\s\\d_]+");
+                        String[] tokens = content.split("[\\W\\r\\n\\s\\d_]+");
                         if (tokens.length == 0) {
-                            context.getCounter(MAPPERCOUNTER.EMPTY_PAGE_TEXT).increment(1);
+                            context.getCounter(STRIPES_MAPPER_COUNTER.EMPTY_PAGE_TEXT).increment(1);
                         } else {
                             for (int i = 0; i < tokens.length; i++) { // skip one letter words
-                                if (tokens[i].length() < 2) continue;
-                                outKey.setWord(tokens[i]);
-                                int start = (i - neighbors < 0) ? 0 : i - neighbors;
-                                int end = (i + neighbors >= tokens.length) ? tokens.length - 1 : i + neighbors;
+                                word.set(tokens[i]);
+                                occurrenceMap.clear();
+
+                                int start = (i - neighbours < 0) ? 0 : i - neighbours;
+                                int end = (i + neighbours >= tokens.length) ? tokens.length - 1 : i + neighbours;
                                 for (int j = start; j <= end; j++) {
-                                    if (j == i || tokens[j].length() < 2) continue;
-                                    outKey.setNeighbor(tokens[j]);
-                                    context.write(outKey, outVal);
+                                    if (j == i) continue;
+                                    Text neighbor = new Text(tokens[j]);
+                                    if(occurrenceMap.containsKey(neighbor)){
+                                        IntWritable count = (IntWritable)occurrenceMap.get(neighbor);
+                                        count.set(count.get()+1);
+                                    }else{
+                                        occurrenceMap.put(neighbor,new IntWritable(1));
+                                    }
                                 }
+                                context.write(word,occurrenceMap);
                             }
                         }
                     } else {
-                        context.getCounter(MAPPERCOUNTER.NON_PLAIN_TEXT).increment(1);
+                        context.getCounter(STRIPES_MAPPER_COUNTER.NON_PLAIN_TEXT).increment(1);
                     }
                 } catch (Exception ex) {
                     logger.error("Caught Exception", ex);
-                    context.getCounter(MAPPERCOUNTER.EXCEPTIONS).increment(1);
+                    context.getCounter(STRIPES_MAPPER_COUNTER.EXCEPTIONS).increment(1);
                 }
             }
         }

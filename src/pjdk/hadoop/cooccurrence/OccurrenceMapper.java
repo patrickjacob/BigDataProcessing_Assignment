@@ -1,4 +1,4 @@
-package pjdk.cooccurence.pairs;
+package pjdk.hadoop.cooccurrence;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.io.LongWritable;
@@ -10,8 +10,6 @@ import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * mapper for gzip archived file, map all headers and constructs
@@ -22,8 +20,8 @@ import java.util.Map;
  * @version 1.0
  */
 @SuppressWarnings("Duplicates")
-public class WordCounterMapInMapperLocal {
-    private static final Logger logger = Logger.getLogger(WordCounterMapInMapperLocal.class);
+public class OccurrenceMapper {
+    private static final Logger logger = Logger.getLogger(OccurrenceMapper.class);
 
     private static final int WINDOW_SIZE = 2;
 
@@ -35,7 +33,10 @@ public class WordCounterMapInMapperLocal {
         NON_PLAIN_TEXT
     }
 
-    protected static class CoOccurrenceMapperInMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
+    protected static class CoOccurrenceMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
+        private String[] tokens;
+        private WordPair outKey = new WordPair();
+        private LongWritable outVal = new LongWritable(1);
 
         static {
             logger.setLevel(Level.DEBUG);
@@ -49,13 +50,9 @@ public class WordCounterMapInMapperLocal {
         @Override
         public void map(Text key, ArchiveReader value, Context context)
                 throws IOException, InterruptedException {
-            int neighbors = context.getConfiguration().getInt("neighbors", WINDOW_SIZE);
+            int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
             logger.warn("running mapper in: " + this.getClass().getSimpleName());
-
-            String[] tokens;
-
             for (ArchiveRecord r : value) {
-                Map<WordPair, Long> inMapperMap = new HashMap<>();
                 try {
                     if (r.getHeader().getMimetype().equals("text/plain")) {
                         context.getCounter(MAPPERCOUNTER.RECORDS_IN).increment(1);
@@ -72,34 +69,21 @@ public class WordCounterMapInMapperLocal {
                         \s matches any whitespace character (equal to [\r\n\t\f\v ])
                         \d matches a digit (equal to [0-9])
                          */
-
                         tokens = content.split("[\\W\\r\\n\\s\\d_]+");
                         if (tokens.length == 0) {
                             context.getCounter(MAPPERCOUNTER.EMPTY_PAGE_TEXT).increment(1);
                         } else {
-                            // implementing an in-map optimizer
-                            for (int i = 0; i < tokens.length; i++) {
-                                if (tokens[i].length() < 2) continue;  // skip one letter words
-                                int start = (i - neighbors < 0) ? 0 : i - neighbors;
-                                int end = (i + neighbors >= tokens.length) ? tokens.length - 1 : i + neighbors;
+                            for (int i = 0; i < tokens.length; i++) { // skip one letter words
+                                if (tokens[i].length() < 2) continue;
+                                outKey.setWord(tokens[i]);
+                                int start = (i - neighbours < 0) ? 0 : i - neighbours;
+                                int end = (i + neighbours >= tokens.length) ? tokens.length - 1 : i + neighbours;
                                 for (int j = start; j <= end; j++) {
                                     if (j == i || tokens[j].length() < 2) continue;
-                                    WordPair wordPair = new WordPair(tokens[i], tokens[j]);
-                                    if (inMapperMap.containsKey(wordPair)){
-                                        long total = inMapperMap.get(wordPair) + 1;
-                                        inMapperMap.put(wordPair, total);
-                                    } else {
-                                        inMapperMap.put(wordPair, 1L);
-                                    }
+                                    outKey.setNeighbor(tokens[j]);
+                                    context.write(outKey, outVal);
                                 }
                             }
-
-                            // output map to context
-                            for(Map.Entry<WordPair, Long> inMapperMapEntry : inMapperMap.entrySet()){
-                                context.write(inMapperMapEntry.getKey(), new LongWritable(inMapperMapEntry.getValue()));
-                            }
-
-
                         }
                     } else {
                         context.getCounter(MAPPERCOUNTER.NON_PLAIN_TEXT).increment(1);

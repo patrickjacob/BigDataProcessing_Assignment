@@ -1,4 +1,4 @@
-package pjdk.cooccurence.pairs;
+package pjdk.hadoop.cooccurrence;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;

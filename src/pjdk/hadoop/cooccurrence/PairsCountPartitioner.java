@@ -15,17 +15,13 @@ public class PairsCountPartitioner
     private static Logger logger = LogManager.getLogger(PairsCountPartitioner.class);
 
     /**
-     * dynamically splits the data between partitioner based on the number of reduce tasks
+     * dynamically partitions the input data between partitioner based on the hashcode of words.
      */
 
     @Override
     public int getPartition(WordPair wordPair, LongWritable longWritable, int numReduceTasks) {
         logger.setLevel(Level.DEBUG);
 
-        if (numReduceTasks == 0) {
-            logger.debug("No partitioning - only ONE reducer");
-            return 0;
-        }
-        return wordPair.getWord().hashCode() % numReduceTasks;
+        return numReduceTasks == 0 ? 0 : wordPair.getWord().hashCode() % numReduceTasks;
     }
 }

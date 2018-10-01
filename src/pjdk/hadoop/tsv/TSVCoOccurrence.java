@@ -115,7 +115,7 @@ public class TSVCoOccurrence extends Configured implements Tool {
                     break;
                 case "occurrenceinmapglobal":
                     job.setJobName("TsvWordPair Co-occurrence With in-map aggregation global collection");
-                    job.setMapperClass(OccurrenceMapperInMapperGlobal.CoOccurrenceMapperInMapper.class);
+                    job.setMapperClass(TSVOccurrenceMapperInMapperGlobal.CoOccurrenceMapperInMapper.class);
                     // set the combiner class. Should be the same as reducer
                     job.setPartitionerClass(PairsCountPartitioner.class);
                     break;
@@ -124,7 +124,7 @@ public class TSVCoOccurrence extends Configured implements Tool {
             job.setOutputKeyClass(Text.class);
             job.setOutputValueClass(MapWritable.class);
 
-            job.setMapperClass(StripesOccurrenceMapper.StripesCoOccurrenceMapper.class);
+            job.setMapperClass(TSVStripesOccurrenceMapper.StripesCoOccurrenceMapper.class);
             // The reducer is quite useful in the word frequency task
             job.setReducerClass(StripesCoOccurrenceReducer.class);
             switch(runnerType){

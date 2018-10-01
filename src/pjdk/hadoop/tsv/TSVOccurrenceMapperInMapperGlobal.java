@@ -5,7 +5,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.archive.io.ArchiveReader;
 import pjdk.hadoop.cooccurrence.WordPair;
 
 import java.io.IOException;
@@ -21,8 +20,8 @@ import java.util.Map;
  * @since 22/9/18.
  */
 @SuppressWarnings("Duplicates")
-public class OccurrenceMapperInMapperGlobal {
-    private static final Logger logger = Logger.getLogger(OccurrenceMapperInMapperGlobal.class);
+public class TSVOccurrenceMapperInMapperGlobal {
+    private static final Logger logger = Logger.getLogger(TSVOccurrenceMapperInMapperGlobal.class);
 
     private static final int WINDOW_SIZE = 2;
 
@@ -34,7 +33,7 @@ public class OccurrenceMapperInMapperGlobal {
         NON_PLAIN_TEXT
     }
 
-    protected static class CoOccurrenceMapperInMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
+    protected static class CoOccurrenceMapperInMapper extends Mapper<LongWritable, Text, WordPair, LongWritable> {
 
         static {
             logger.setLevel(Level.DEBUG);
@@ -53,7 +52,7 @@ public class OccurrenceMapperInMapperGlobal {
          * @param value pointer to WARC file
          */
         @Override
-        public void map(Text key, ArchiveReader value, Context context)
+        public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException{
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
             logger.warn("running mapper in: " + this.getClass().getSimpleName());

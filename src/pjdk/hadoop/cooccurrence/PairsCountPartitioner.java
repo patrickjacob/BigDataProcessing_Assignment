@@ -14,8 +14,6 @@ public class PairsCountPartitioner
         extends Partitioner<WordPair, LongWritable> {
     private static Logger logger = LogManager.getLogger(PairsCountPartitioner.class);
 
-    private final static String alphabet = "abcdefghijklmnopqrstuvwxyz";
-
     /**
      * dynamically splits the data between partitioner based on the number of reduce tasks
      */
@@ -24,8 +22,7 @@ public class PairsCountPartitioner
     public int getPartition(WordPair wordPair, LongWritable longWritable, int numReduceTasks) {
         logger.setLevel(Level.DEBUG);
 
-        if(numReduceTasks == 0)
-        {
+        if (numReduceTasks == 0) {
             logger.debug("No partitioning - only ONE reducer");
             return 0;
         }

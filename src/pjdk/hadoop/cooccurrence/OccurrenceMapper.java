@@ -16,8 +16,8 @@ import java.io.IOException;
  * co-occurrence of predefined window value of 2
  *
  * @author dimz, patrick
- * @since 22/9/18.
  * @version 1.0
+ * @since 22/9/18.
  */
 @SuppressWarnings("Duplicates")
 public class OccurrenceMapper {
@@ -44,7 +44,8 @@ public class OccurrenceMapper {
 
         /**
          * mapper function
-         * @param key not used in method,  id of WARC file
+         *
+         * @param key   not used in method,  id of WARC file
          * @param value pointer to WARC file
          */
         @Override

@@ -12,6 +12,7 @@ import java.io.IOException;
  * @author dimz
  * @since 30/9/18.
  */
+@SuppressWarnings("Duplicates")
 public class StripesCoOccurrenceReducer extends Reducer<Text, MapWritable, Text, MapWritable> {
     private MapWritable valuesIncrementsMap = new MapWritable();
 

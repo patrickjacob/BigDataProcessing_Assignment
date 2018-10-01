@@ -23,7 +23,7 @@ public class PairReducer extends LongSumReducer<WordPair> {
         long count = 0L;
 
 
-        for(LongWritable value : values) {
+        for (LongWritable value : values) {
             count += value.get();
         }
 

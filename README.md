@@ -14,7 +14,7 @@ Assignment for Big Data Processing - Map Reduce centered
 hadoop distcp s3a://commoncrawl/crawl-data/CC-MAIN-2018-39/segments/1537267155413.17/wet/CC-MAIN-20180918130631-20180918150631-00000.warc.wet.gz /tmp
 8. Upload jar file to hadoop via hue (which means it is on the cluster but has to be still transfered to the master node)
 9. Move jar file to master node - hadoop fs -copyToLocal <path_to_jar>/counter-1.0.1-SNAPSHOT.jar /home/hadoop/ 
-10. Executive the job from master - hadoop jar /home/hadoop/counter-1.0.1-SNAPSHOT.jar pjdk.hadoop.cooccurrence.CoOccurrence <path to dataset> <number of mappers> <Execution_Option> 
+10. Executive the job from master - hadoop jar /home/hadoop/counter-1.0.1-SNAPSHOT.jar pjdk.hadoop.cooccurrence.CoOccurrence %path to dataset% %number of reducers% %Execution_Option% 
 
 ### Options for Execution
 occurrence = Plain Pairs Implementation

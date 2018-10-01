@@ -55,7 +55,7 @@ public class OccurrenceMapperInMapperGlobal {
          */
         @Override
         public void map(Text key, ArchiveReader value, Context context)
-                throws IOException, InterruptedException{
+                throws IOException, InterruptedException {
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
             logger.warn("running mapper in: " + this.getClass().getSimpleName());
             Map<WordPair, Long> inMapperMap = getInMapperMap();
@@ -120,8 +120,8 @@ public class OccurrenceMapperInMapperGlobal {
 
         private void flush(Context context, boolean force) throws IOException, InterruptedException {
             Map<WordPair, Long> inMapperMap = getInMapperMap();
-            if(!force) {
-                if(inMapperMap.size() < FLUSH_SIZE)
+            if (!force) {
+                if (inMapperMap.size() < FLUSH_SIZE)
                     return;
             }
             for (Map.Entry<WordPair, Long> inMapperMapEntry : inMapperMap.entrySet()) {

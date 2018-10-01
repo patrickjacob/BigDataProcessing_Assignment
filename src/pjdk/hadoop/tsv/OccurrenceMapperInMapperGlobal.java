@@ -1,13 +1,12 @@
-package pjdk.hadoop.cooccurrence;
+package pjdk.hadoop.tsv;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.archive.io.ArchiveReader;
-import org.archive.io.ArchiveRecord;
+import pjdk.hadoop.cooccurrence.WordPair;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,8 +21,8 @@ import java.util.Map;
  * @since 22/9/18.
  */
 @SuppressWarnings("Duplicates")
-public class OccurrenceMapperInMapperLocal {
-    private static final Logger logger = Logger.getLogger(OccurrenceMapperInMapperLocal.class);
+public class OccurrenceMapperInMapperGlobal {
+    private static final Logger logger = Logger.getLogger(OccurrenceMapperInMapperGlobal.class);
 
     private static final int WINDOW_SIZE = 2;
 
@@ -41,6 +40,12 @@ public class OccurrenceMapperInMapperLocal {
             logger.setLevel(Level.DEBUG);
         }
 
+        // flushing frequency
+        private static final int FLUSH_SIZE = 10000;
+
+        // global in map approach. potentially will trigger out of memory error
+        private Map<WordPair, Long> inMapperMap;
+
         /**
          * mapper function
          *
@@ -49,21 +54,17 @@ public class OccurrenceMapperInMapperLocal {
          */
         @Override
         public void map(Text key, ArchiveReader value, Context context)
-                throws IOException, InterruptedException {
+                throws IOException, InterruptedException{
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
             logger.warn("running mapper in: " + this.getClass().getSimpleName());
+            String[] line = value.toString().split("\t", -3);
+            Map<WordPair, Long> inMapperMap = getInMapperMap();
 
             String[] tokens;
 
-            for (ArchiveRecord r : value) {
-                Map<WordPair, Long> inMapperMap = new HashMap<>();
                 try {
-                    if (r.getHeader().getMimetype().equals("text/plain")) {
+                    if (!line[0].equals("marketplace")) {  // if a header line
                         context.getCounter(MAPPER_COUNTER.RECORDS_IN).increment(1);
-                        logger.debug(r.getHeader().getUrl() + " -- " + r.available());
-                        // Convenience function that reads the full message into a raw byte array
-                        byte[] rawData = IOUtils.toByteArray(r, r.available());
-                        String content = new String(rawData);
                         // Grab each word from the document
                          /*
                         Match a single character present in the list below [\W\r\n\s\d]
@@ -74,7 +75,7 @@ public class OccurrenceMapperInMapperLocal {
                         \d matches a digit (equal to [0-9])
                          */
 
-                        tokens = content.split("[\\W\\r\\n\\s\\d_]+");
+                        tokens = line[13].split("[\\W\\r\\n\\s\\d_]+");
                         if (tokens.length == 0) {
                             context.getCounter(MAPPER_COUNTER.EMPTY_PAGE_TEXT).increment(1);
                         } else {
@@ -94,13 +95,7 @@ public class OccurrenceMapperInMapperLocal {
                                     }
                                 }
                             }
-
-                            // output map to context
-                            for (Map.Entry<WordPair, Long> inMapperMapEntry : inMapperMap.entrySet()) {
-                                context.write(inMapperMapEntry.getKey(), new LongWritable(inMapperMapEntry.getValue()));
-                            }
-
-
+                            flush(context, false);
                         }
                     } else {
                         context.getCounter(MAPPER_COUNTER.NON_PLAIN_TEXT).increment(1);
@@ -109,7 +104,33 @@ public class OccurrenceMapperInMapperLocal {
                     logger.error("Caught Exception", ex);
                     context.getCounter(MAPPER_COUNTER.EXCEPTIONS).increment(1);
                 }
+
+        }
+
+        @Override
+        protected void cleanup(Context context) throws IOException, InterruptedException {
+            // output map to context
+            flush(context, true);
+        }
+
+        private void flush(Context context, boolean force) throws IOException, InterruptedException {
+            Map<WordPair, Long> inMapperMap = getInMapperMap();
+            if(!force) {
+                if(inMapperMap.size() < FLUSH_SIZE)
+                    return;
             }
+            for (Map.Entry<WordPair, Long> inMapperMapEntry : inMapperMap.entrySet()) {
+                context.write(inMapperMapEntry.getKey(), new LongWritable(inMapperMapEntry.getValue()));
+            }
+            inMapperMap.clear();
+
+        }
+
+        public Map<WordPair, Long> getInMapperMap() {
+            if (null == inMapperMap) {//lazy loading
+                inMapperMap = new HashMap<>();
+            }
+            return inMapperMap;
         }
     }
 }

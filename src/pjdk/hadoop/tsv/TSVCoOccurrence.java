@@ -104,20 +104,16 @@ public class TSVCoOccurrence extends Configured implements Tool {
                 case "occurrencepartitioner":
                     job.setJobName("TsvWordPair Co-occurrence With Partitioner");
                     job.setMapperClass(TSVOccurrenceMapper.CoOccurrenceMapper.class);
-                    // set the combiner class. Should be the same as reducer
+                    // set the partitioner class. Should be the same as reducer
                     job.setPartitionerClass(PairsCountPartitioner.class);
                     break;
                 case "occurrenceinmaplocal":
                     job.setJobName("TsvWordPair Co-occurrence With in-map aggregation local collection");
                     job.setMapperClass(TSVOccurrenceMapperInMapperLocal.CoOccurrenceMapperInMapper.class);
-                    // set the combiner class. Should be the same as reducer
-                    job.setPartitionerClass(PairsCountPartitioner.class);
                     break;
                 case "occurrenceinmapglobal":
                     job.setJobName("TsvWordPair Co-occurrence With in-map aggregation global collection");
                     job.setMapperClass(TSVOccurrenceMapperInMapperGlobal.CoOccurrenceMapperInMapper.class);
-                    // set the combiner class. Should be the same as reducer
-                    job.setPartitionerClass(PairsCountPartitioner.class);
                     break;
             }
         } else if(runnerType.contains("stripes"))  {

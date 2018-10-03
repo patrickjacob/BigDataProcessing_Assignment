@@ -22,6 +22,12 @@ public class PairsCountPartitioner
     public int getPartition(WordPair wordPair, LongWritable longWritable, int numReduceTasks) {
         logger.setLevel(Level.DEBUG);
 
-        return numReduceTasks == 0 ? 0 : wordPair.getWord().hashCode() % numReduceTasks;
+        if (numReduceTasks == 0) {
+            logger.debug("No partitioning - only ONE reducer");
+            return 0;
+        }
+        return wordPair.getWord().hashCode() % numReduceTasks;
     }
 }
+
+

@@ -37,10 +37,6 @@ public class OccurrenceMapperInMapperLocal {
 
     protected static class CoOccurrenceMapperInMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
 
-        static {
-            logger.setLevel(Level.DEBUG);
-        }
-
         /**
          * mapper function
          *
@@ -50,6 +46,9 @@ public class OccurrenceMapperInMapperLocal {
         @Override
         public void map(Text key, ArchiveReader value, Context context)
                 throws IOException, InterruptedException {
+
+            logger.setLevel(Level.DEBUG);
+
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
             logger.warn("running mapper in: " + this.getClass().getSimpleName());
 

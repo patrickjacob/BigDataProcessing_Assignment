@@ -3,6 +3,9 @@ package pjdk.hadoop.cooccurrence;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.reduce.LongSumReducer;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
@@ -14,12 +17,18 @@ import java.io.IOException;
 public class PairReducer extends LongSumReducer<WordPair> {
     // could have gotten away with just a simple LongSumReducer but need to implement one manually
     private LongWritable result = new LongWritable();
+    private static Logger logger = LogManager.getLogger(LongSumReducer.class);
 
     @Override
     public void reduce(WordPair wordPair,
                        Iterable<LongWritable> values,
                        Reducer<WordPair, LongWritable, WordPair, LongWritable>.Context context)
             throws IOException, InterruptedException {
+
+        logger.setLevel(Level.DEBUG);
+
+        logger.debug("running reduce task");
+
         long count = 0L;
 
 

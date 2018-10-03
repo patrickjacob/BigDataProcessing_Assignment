@@ -38,6 +38,7 @@ public class OccurrenceMapper {
         private WordPair outKey = new WordPair();
         private LongWritable outVal = new LongWritable(1);
 
+        //set logger statically
         static {
             logger.setLevel(Level.DEBUG);
         }
@@ -51,8 +52,12 @@ public class OccurrenceMapper {
         @Override
         public void map(Text key, ArchiveReader value, Context context)
                 throws IOException, InterruptedException {
+
+            // set logger lever on instance
+            logger.setLevel(Level.DEBUG);
+
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
-            logger.warn("running mapper in: " + this.getClass().getSimpleName());
+            logger.debug("running mapper in: " + this.getClass().getSimpleName());
             for (ArchiveRecord r : value) {
                 try {
                     if (r.getHeader().getMimetype().equals("text/plain")) {

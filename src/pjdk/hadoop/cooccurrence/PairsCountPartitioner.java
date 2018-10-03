@@ -14,6 +14,8 @@ public class PairsCountPartitioner
         extends Partitioner<WordPair, LongWritable> {
     private static Logger logger = LogManager.getLogger(PairsCountPartitioner.class);
 
+    private final static String alphabet = "abcdefghijklmnopqrstuvwxyz";
+
     /**
      * dynamically partitions the input data between partitioner based on the hashcode of words.
      */
@@ -22,11 +24,25 @@ public class PairsCountPartitioner
     public int getPartition(WordPair wordPair, LongWritable longWritable, int numReduceTasks) {
         logger.setLevel(Level.DEBUG);
 
-        if (numReduceTasks == 0) {
+        if(numReduceTasks == 0)
+        {
             logger.debug("No partitioning - only ONE reducer");
             return 0;
         }
-        return wordPair.getWord().hashCode() % numReduceTasks;
+        char firsLetter = wordPair.getWord().toString().toLowerCase().charAt(0);
+        int letterInAlphabet = alphabet.indexOf(firsLetter);
+
+        if(letterInAlphabet < 8){
+            return 0;
+        } else if (letterInAlphabet >= 9 && letterInAlphabet <=17) {
+            return 1 % numReduceTasks;
+        } else {
+            return 2 % numReduceTasks;
+        }
+
+
+
+
     }
 }
 

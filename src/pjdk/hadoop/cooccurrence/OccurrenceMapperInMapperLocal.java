@@ -95,12 +95,6 @@ public class OccurrenceMapperInMapperLocal {
                                 }
                             }
 
-                            // output map to context
-                            for (Map.Entry<WordPair, Long> inMapperMapEntry : inMapperMap.entrySet()) {
-                                context.write(inMapperMapEntry.getKey(), new LongWritable(inMapperMapEntry.getValue()));
-                            }
-
-
                         }
                     } else {
                         context.getCounter(MAPPER_COUNTER.NON_PLAIN_TEXT).increment(1);
@@ -108,6 +102,11 @@ public class OccurrenceMapperInMapperLocal {
                 } catch (Exception ex) {
                     logger.error("Caught Exception", ex);
                     context.getCounter(MAPPER_COUNTER.EXCEPTIONS).increment(1);
+                }
+                // output map to context
+                logger.warn("MapSize: " + inMapperMap.size());
+                for (Map.Entry<WordPair, Long> inMapperMapEntry : inMapperMap.entrySet()) {
+                    context.write(inMapperMapEntry.getKey(), new LongWritable(inMapperMapEntry.getValue()));
                 }
             }
         }

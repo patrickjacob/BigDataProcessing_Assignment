@@ -118,14 +118,14 @@ public class CoOccurrence extends Configured implements Tool {
 
             job.setMapperClass(StripesOccurrenceMapper.StripesCoOccurrenceMapper.class);
             // The reducer is quite useful in the word frequency task
-            job.setReducerClass(StripesCoOccurrenceReducer.class);
+            job.setReducerClass(StripesOccurrenceReducer.class);
             switch (runnerType) {
                 case "stripes":
                     job.setJobName("Stripes Co-occurrence");
                     break;
                 case "stripescombiner":
                     job.setJobName("Stripes Co-occurrence With Combiner");
-                    job.setCombinerClass(StripesCoOccurrenceReducer.class);
+                    job.setCombinerClass(StripesOccurrenceReducer.class);
                     break;
             }
         } else {

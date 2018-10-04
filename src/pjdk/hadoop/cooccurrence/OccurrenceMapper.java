@@ -28,6 +28,7 @@ public class OccurrenceMapper {
     // counters visible in job on hue
     protected enum MAPPER_COUNTER {
         RECORDS_IN,
+        RECORDS_OUT,
         EMPTY_PAGE_TEXT,
         EXCEPTIONS,
         NON_PLAIN_TEXT
@@ -52,9 +53,6 @@ public class OccurrenceMapper {
         @Override
         public void map(Text key, ArchiveReader value, Context context)
                 throws IOException, InterruptedException {
-
-            // set logger lever on instance
-            logger.setLevel(Level.DEBUG);
 
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
             logger.debug("running mapper in: " + this.getClass().getSimpleName());

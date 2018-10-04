@@ -19,23 +19,25 @@ public class PairReducer extends LongSumReducer<WordPair> {
     private LongWritable result = new LongWritable();
     private static Logger logger = LogManager.getLogger(LongSumReducer.class);
 
+    //set logger statically
+    static {
+        logger.setLevel(Level.DEBUG);
+    }
+
     @Override
     public void reduce(WordPair wordPair,
                        Iterable<LongWritable> values,
                        Reducer<WordPair, LongWritable, WordPair, LongWritable>.Context context)
             throws IOException, InterruptedException {
 
-        logger.setLevel(Level.DEBUG);
-
         logger.debug("running reduce task");
+        context.getCounter(OccurrenceMapper.MAPPER_COUNTER.RECORDS_OUT).increment(1);
 
         long count = 0L;
-
 
         for (LongWritable value : values) {
             count += value.get();
         }
-
         result.set(count);
         context.write(wordPair, this.result);
     }

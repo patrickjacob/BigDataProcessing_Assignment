@@ -35,6 +35,7 @@ public class TSVOccurrenceMapperInMapperGlobal {
 
     protected static class CoOccurrenceMapperInMapper extends Mapper<LongWritable, Text, WordPair, LongWritable> {
 
+        //set logger statically
         static {
             logger.setLevel(Level.DEBUG);
         }

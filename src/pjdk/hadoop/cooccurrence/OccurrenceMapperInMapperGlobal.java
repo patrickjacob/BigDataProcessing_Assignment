@@ -37,6 +37,7 @@ public class OccurrenceMapperInMapperGlobal {
 
     protected static class CoOccurrenceMapperInMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
 
+        //set logger statically
         static {
             logger.setLevel(Level.DEBUG);
         }

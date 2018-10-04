@@ -36,6 +36,7 @@ public class TSVOccurrenceMapper {
         private WordPair outKey = new WordPair();
         private LongWritable outVal = new LongWritable(1);
 
+        //set logger statically
         static {
             logger.setLevel(Level.DEBUG);
         }

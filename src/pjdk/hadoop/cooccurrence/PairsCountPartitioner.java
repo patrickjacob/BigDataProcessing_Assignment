@@ -14,6 +14,11 @@ public class PairsCountPartitioner
         extends Partitioner<WordPair, LongWritable> {
     private static Logger logger = LogManager.getLogger(PairsCountPartitioner.class);
 
+    //set logger statically
+    static {
+        logger.setLevel(Level.DEBUG);
+    }
+
     private final static String alphabet = "abcdefghijklmnopqrstuvwxyz";
 
     /**
@@ -22,7 +27,6 @@ public class PairsCountPartitioner
 
     @Override
     public int getPartition(WordPair wordPair, LongWritable longWritable, int numReduceTasks) {
-        logger.setLevel(Level.DEBUG);
 
         if(numReduceTasks == 0)
         {

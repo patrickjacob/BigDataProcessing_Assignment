@@ -50,7 +50,7 @@ public class TSVOccurrenceMapper {
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
-            logger.warn("running mapper in: " + this.getClass().getSimpleName());
+            logger.debug("running mapper in: " + this.getClass().getSimpleName());
 
             // split input line into values
             String[] line = value.toString().split("\t", -3);

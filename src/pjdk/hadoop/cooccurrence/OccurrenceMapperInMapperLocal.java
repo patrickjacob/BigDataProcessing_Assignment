@@ -53,7 +53,7 @@ public class OccurrenceMapperInMapperLocal {
                 throws IOException, InterruptedException {
 
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
-            logger.warn("running mapper in: " + this.getClass().getSimpleName());
+            logger.debug("running mapper in: " + this.getClass().getSimpleName());
 
             String[] tokens;
 
@@ -106,7 +106,7 @@ public class OccurrenceMapperInMapperLocal {
                     context.getCounter(MAPPER_COUNTER.EXCEPTIONS).increment(1);
                 }
                 // output map to context
-                logger.warn("MapSize: " + inMapperMap.size());
+                logger.debug("MapSize: " + inMapperMap.size());
                 for (Map.Entry<WordPair, Long> inMapperMapEntry : inMapperMap.entrySet()) {
                     context.write(inMapperMapEntry.getKey(), new LongWritable(inMapperMapEntry.getValue()));
                 }

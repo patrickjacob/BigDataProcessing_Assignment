@@ -58,7 +58,7 @@ public class OccurrenceMapperInMapperGlobal {
         public void map(Text key, ArchiveReader value, Context context)
                 throws IOException, InterruptedException {
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
-            logger.warn("running mapper in: " + this.getClass().getSimpleName());
+            logger.debug("running mapper in: " + this.getClass().getSimpleName());
             Map<WordPair, Long> inMapperMap = getInMapperMap();
 
             String[] tokens;

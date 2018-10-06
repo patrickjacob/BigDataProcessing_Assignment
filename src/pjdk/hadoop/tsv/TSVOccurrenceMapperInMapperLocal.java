@@ -34,7 +34,7 @@ public class TSVOccurrenceMapperInMapperLocal {
         HEADERS_LINE
     }
 
-    protected static class CoOccurrenceMapperInMapper extends Mapper<Text, ArchiveReader, WordPair, LongWritable> {
+    protected static class CoOccurrenceMapperInMapper extends Mapper<LongWritable, Text, WordPair, LongWritable> {
 
         static {
             logger.setLevel(Level.DEBUG);
@@ -47,7 +47,7 @@ public class TSVOccurrenceMapperInMapperLocal {
          * @param value pointer to WARC file
          */
         @Override
-        public void map(Text key, ArchiveReader value, Context context)
+        public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
             logger.warn("running mapper in: " + this.getClass().getSimpleName());

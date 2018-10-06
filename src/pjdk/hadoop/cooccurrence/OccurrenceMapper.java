@@ -28,6 +28,7 @@ public class OccurrenceMapper {
     // counters visible in job on hue
     protected enum MAPPER_COUNTER {
         RECORDS_IN,
+        RECORDS_OUT,
         EMPTY_PAGE_TEXT,
         EXCEPTIONS,
         NON_PLAIN_TEXT
@@ -38,6 +39,7 @@ public class OccurrenceMapper {
         private WordPair outKey = new WordPair();
         private LongWritable outVal = new LongWritable(1);
 
+        //set logger statically
         static {
             logger.setLevel(Level.DEBUG);
         }
@@ -51,8 +53,9 @@ public class OccurrenceMapper {
         @Override
         public void map(Text key, ArchiveReader value, Context context)
                 throws IOException, InterruptedException {
+
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
-            logger.warn("running mapper in: " + this.getClass().getSimpleName());
+            logger.debug("running mapper in: " + this.getClass().getSimpleName());
             for (ArchiveRecord r : value) {
                 try {
                     if (r.getHeader().getMimetype().equals("text/plain")) {

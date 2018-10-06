@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import pjdk.hadoop.cooccurrence.PairReducer;
 import pjdk.hadoop.cooccurrence.PairsCountPartitioner;
-import pjdk.hadoop.cooccurrence.StripesCoOccurrenceReducer;
+import pjdk.hadoop.cooccurrence.StripesOccurrenceReducer;
 import pjdk.hadoop.cooccurrence.WordPair;
 
 import java.security.InvalidParameterException;
@@ -122,14 +122,14 @@ public class TSVCoOccurrence extends Configured implements Tool {
 
             job.setMapperClass(TSVStripesOccurrenceMapper.StripesCoOccurrenceMapper.class);
             // The reducer is quite useful in the word frequency task
-            job.setReducerClass(StripesCoOccurrenceReducer.class);
+            job.setReducerClass(StripesOccurrenceReducer.class);
             switch(runnerType){
                 case "stripes":
                     job.setJobName("TsvStripes Co-occurrence");
                     break;
                 case "stripescombiner":
                     job.setJobName("TsvStripes Co-occurrence With Combiner");
-                    job.setCombinerClass(StripesCoOccurrenceReducer.class);
+                    job.setCombinerClass(StripesOccurrenceReducer.class);
                     break;
             }
         } else {

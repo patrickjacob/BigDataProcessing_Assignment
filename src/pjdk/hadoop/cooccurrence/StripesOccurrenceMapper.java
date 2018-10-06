@@ -48,7 +48,7 @@ public class StripesOccurrenceMapper {
         public void map(Text key, ArchiveReader value, Context context)
                 throws IOException, InterruptedException {
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
-            logger.warn("running mapper in: " + this.getClass().getSimpleName());
+            logger.debug("running mapper in: " + this.getClass().getSimpleName());
             for (ArchiveRecord r : value) {
                 try {
                     if (r.getHeader().getMimetype().equals("text/plain")) {

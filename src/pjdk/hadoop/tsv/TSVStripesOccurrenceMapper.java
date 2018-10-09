@@ -1,6 +1,7 @@
 package pjdk.hadoop.tsv;
 
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -28,7 +29,7 @@ public class TSVStripesOccurrenceMapper {
         NON_PLAIN_TEXT
     }
 
-    protected static class StripesCoOccurrenceMapper extends Mapper<Text, ArchiveReader, Text, MapWritable> {
+    protected static class StripesCoOccurrenceMapper extends Mapper<LongWritable, Text, Text, MapWritable> {
         private MapWritable occurrenceMap = new MapWritable();
         private Text word = new Text();
 
@@ -43,7 +44,7 @@ public class TSVStripesOccurrenceMapper {
          * @param value pointer to WARC file
          */
         @Override
-        public void map(Text key, ArchiveReader value, Context context)
+        public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             int neighbours = context.getConfiguration().getInt("neighbours", WINDOW_SIZE);
             logger.debug("running mapper in: " + this.getClass().getSimpleName());

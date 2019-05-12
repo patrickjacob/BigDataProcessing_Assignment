@@ -1,6 +1,9 @@
 # BigDataProcessing_Assignment
 Assignment for Big Data Processing - Map Reduce centered 
 
+ [Here the Final Report] (https://github.com/patrickjacob/BigDataProcessing_Assignment/blob/master/big_data_processing_report.pdf)
+[Here the Presenation Material used](https://github.com/patrickjacob/BigDataProcessing_Assignment/blob/master/big_data_processing_report.pdf)
+
 ### How to work with the program on AWS
 1. Login to jump host (e.g. ssh ec2-user@<student_id>.jump.cosc2637.route53.aws.rmit.edu.au -i <path_to_key>/<student_id>-cosc2637.pem)
 2. Initiate cluster (create.sh)

@@ -1,7 +1,7 @@
 # BigDataProcessing_Assignment
 Assignment for Big Data Processing - Map Reduce centered 
 
- [Here the Final Report] (https://github.com/patrickjacob/BigDataProcessing_Assignment/blob/master/big_data_processing_report.pdf)
+[Here the Final Report](https://github.com/patrickjacob/BigDataProcessing_Assignment/blob/master/big_data_processing_report.pdf)
 [Here the Presenation Material used](https://github.com/patrickjacob/BigDataProcessing_Assignment/blob/master/big_data_processing_report.pdf)
 
 ### How to work with the program on AWS
